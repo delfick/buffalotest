@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/lifx/test/actions"
+	"github.com/lifx/test/thing"
 )
 
 // main is the starting point for your Buffalo application.
@@ -13,7 +14,8 @@ import (
 // call `app.Serve()`, unless you don't want to start your
 // application that is. :)
 func main() {
-	app := actions.App()
+	t := &thing.Thing{}
+	app := actions.App(t)
 	if err := app.Serve(); err != nil {
 		log.Fatal(err)
 	}

@@ -8,6 +8,15 @@ import (
 	csrf "github.com/gobuffalo/mw-csrf"
 )
 
+// Reachable is an interface that knows if something is reachable
+type Reachable interface {
+	Reachable() bool
+}
+
+type stuff struct {
+	thing Reachable
+}
+
 // ENV is used to help switch settings based on where the
 // application is being run. Default is "development".
 var ENV = envy.Get("GO_ENV", "development")
@@ -27,6 +36,8 @@ var app *buffalo.App
 // placed last in the route declarations, as it will prevent routes
 // declared after it to never be called.
 func App(thing Reachable) *buffalo.App {
+	s := &stuff{thing}
+
 	if app == nil {
 		app = buffalo.New(buffalo.Options{
 			Env:         ENV,
@@ -41,6 +52,7 @@ func App(thing Reachable) *buffalo.App {
 		app.Use(csrf.New)
 
 		app.GET("/", HomeHandler)
+		app.GET("/status", s.Status)
 
 		app.ServeFiles("/", assetsBox) // serve files from the public directory
 	}
